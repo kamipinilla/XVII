@@ -43,7 +43,7 @@ export default class Player {
     }
   }
 
-  public predict(input: number[]) {
+  public predict(input: number[][][]) {
     const output: number[] = this.brain.predict(input)
     const [rawShift, rawRot] = output
 

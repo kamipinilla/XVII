@@ -174,25 +174,37 @@ export default class Game {
     this.piece.rotateLeft()
   }
 
-  public getBrainInput(): number[] {
+  public getBrainInput(): number[][][] {
     const encoded = this.board.getEncoded()
 
     const piecePosition = this.piece.getPositions()
     for (const position of piecePosition) {
-      encoded[position.getX()][position.getY()] = 1
+      encoded[position.getX()][position.getY()] = [1]
     }
     
+    for (let i = 0; i < 10; i++) {
+      const col = []
+      for (let j = 0; j < 20; j++) {
+        col.push([0])
+      }
+
+      if (i < 5) {
+        encoded.unshift(col)
+      } else {
+        encoded.push(col)
+      }
+    }
+
     // Game.displayEncoded(encoded)
 
-    const flat = Game.flaten(encoded)
-    return flat
+    return encoded
   }
 
-  private static displayEncoded(encoded: number[][]): void {
-    for (let j = Board.height - 1; j >= 0; j--) {
+  private static displayEncoded(encoded: number[][][]): void {
+    for (let j = encoded[0].length - 1; j >= 0; j--) {
       let row = ''
-      for (let i = 0; i < Board.width; i++) {
-        row += encoded[i][j] === 1 ? 'X' : '-'
+      for (let i = 0; i < encoded.length; i++) {
+        row += encoded[i][j][0] === 1 ? 'X' : '-'
       }
       console.log(row)
     }

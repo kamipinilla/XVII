@@ -184,13 +184,15 @@ export default class Board {
     return new Position(5, Board.height - 1)
   }
 
-  public getEncoded(): number[][] {
-    const encoded: number[][] = [...Array(Board.width)].map(_ => Array(Board.height))
+  public getEncoded(): number[][][] {
+    const encoded: number[][][] = []
     for (let i = 0; i < Board.width; i++) {
+      const col: number[][] = []
       for (let j = 0; j < Board.height; j++) {
-        const value = this.isPositionFilled(new Position(i, j)) ? 1 : 0
-        encoded[i][j] = value
+        const value = this.isPositionFilled(new Position(i, j)) ? [1] : [0]
+        col.push(value)
       }
+      encoded.push(col)
     }
 
     return encoded
