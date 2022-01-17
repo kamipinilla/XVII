@@ -3,9 +3,6 @@ import Board from '../game/Board'
 import randomNormal from 'random-normal'
 
 export default class Brain {
-  private static readonly inputNodes = 10 * Board.height
-  private static readonly outputNodes = 2
-
   private model: Sequential
 
   constructor(model?: Sequential) {
