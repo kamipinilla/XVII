@@ -4,7 +4,7 @@ import Player from './serif/Player'
 function main() {
   const geneticAlgo = new GeneticAlgo()
 
-  const totalGen = 20000
+  const totalGen = 50000
   const logEvery = 100
 
   for (let i = 0; i < totalGen; i++) {
