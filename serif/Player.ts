@@ -45,22 +45,22 @@ export default class Player {
 
   public predict(input: number[][][]) {
     const output: number[] = this.brain.predict(input)
-    const [rawShift, rawRot] = output
 
-    const shift = Player.getShift(rawShift)
-    const rot = Player.getRot(rawRot)
-    
+    let maxValue = -1
+    let maxIndex!: number
+    for (const [index, value] of output.entries()) {
+      if (value > maxValue) {
+        maxValue = value
+        maxIndex = index
+      }
+    }
+
+    const shift = (maxIndex % 10) - 5
+    const rot = Math.floor(maxIndex / 10)
+
     return {
       shift,
       rot,
     }
-  }
-
-  private static getShift(rawShift: number) {
-    return Math.floor(rawShift * 10) - 5
-  }
-
-  private static getRot(rawRot: number) {
-    return Math.floor(rawRot * 4)
   }
 }
