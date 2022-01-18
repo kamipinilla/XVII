@@ -2,7 +2,7 @@ import { setBackend } from '@tensorflow/tfjs'
 import Player from './Player'
 
 export default class GeneticAlgo {
-  private static readonly popSize = 100
+  private static readonly popSize = 1000
 
   private static readonly mutationRate = 0.01
   private static readonly bitMutationRate = 0.01
