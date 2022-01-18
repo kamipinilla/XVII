@@ -13,7 +13,7 @@ export default class Brain {
     }
   }
 
-  crossover(other: Brain): void {
+  crossover(other: Brain, bitCrossoverRate: number): void {
     tidy(() => {
       const weights = this.model.getWeights()
       const otherWeights = other.model.getWeights()
@@ -29,7 +29,7 @@ export default class Brain {
         const newValues = []
 
         for (let j = 0; j < values.length; j++) {
-          const newValue = Math.random() < 0.5 ? values[j] : otherValues[j]
+          const newValue = Math.random() < (1 - bitCrossoverRate) ? values[j] : otherValues[j]
           newValues.push(newValue)
         }
 

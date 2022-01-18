@@ -11,7 +11,7 @@ function main() {
     geneticAlgo.nextGeneration()
     if (i % logEvery === 0) {
       const bestPlayer = getBestPlayer(geneticAlgo)
-      console.log(bestPlayer.getFitness())
+      console.log(i, bestPlayer.getFitness())
     }
   }
 }

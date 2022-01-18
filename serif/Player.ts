@@ -23,8 +23,8 @@ export default class Player {
     this.fitness = fitness !== 0 ? fitness : 0.01
   }
 
-  public crossover(other: Player): void {
-    this.brain.crossover(other.brain)
+  public crossover(other: Player, crossoverRate: number): void {
+    this.brain.crossover(other.brain, crossoverRate)
   }
 
   public mutate(mutationRate: number): void {

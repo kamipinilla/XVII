@@ -3,8 +3,12 @@ import Player from './Player'
 
 export default class GeneticAlgo {
   private static readonly popSize = 100
+
   private static readonly mutationRate = 0.01
-  private static readonly crossoverRate = 0.05
+  private static readonly bitMutationRate = 0.01
+  
+  private static readonly crossoverRate = 0.01
+  private static readonly bitCrossoverRate = 0.01
 
   // @ts-expect-error
   private players: Player[]
@@ -52,10 +56,12 @@ export default class GeneticAlgo {
 
     if (Math.random() < GeneticAlgo.crossoverRate) {
       const otherPlayer = this.selectAndCopyPlayer()
-      newPlayer.crossover(otherPlayer)
+      newPlayer.crossover(otherPlayer, GeneticAlgo.bitCrossoverRate)
     }
 
-    newPlayer.mutate(GeneticAlgo.mutationRate)
+    if (Math.random() < GeneticAlgo.mutationRate) {
+      newPlayer.mutate(GeneticAlgo.bitMutationRate)
+    }
     return newPlayer
   }
 
