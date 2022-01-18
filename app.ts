@@ -5,7 +5,7 @@ function main() {
   const geneticAlgo = new GeneticAlgo()
 
   const totalGen = 50000
-  const logEvery = 100
+  const logEvery = 10
 
   for (let i = 0; i < totalGen; i++) {
     geneticAlgo.nextGeneration()

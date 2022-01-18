@@ -7,39 +7,74 @@ import OPiece from './pieces/set/OPiece'
 import SPiece from './pieces/set/SPiece'
 import TPiece from './pieces/set/TPiece'
 import ZPiece from './pieces/set/ZPiece'
-import { PiecePositions } from './pieces/types'
+import { PieceName, PiecePositions } from './pieces/types'
 import Position from './Position'
 
-function getRandomPiece(): Piece {
+function createPiece(pieceName: PieceName): Piece {
   const anchor = Board.getStartPosition()
-  const numPieces = 7
-  const randomInt = Math.floor(Math.random() * numPieces)
-  switch (randomInt) {
-    case 0: return new OPiece(anchor)
-    case 1: return new IPiece(anchor)
-    case 2: return new SPiece(anchor)
-    case 3: return new ZPiece(anchor)
-    case 4: return new LPiece(anchor)
-    case 5: return new JPiece(anchor)
-    case 6: return new TPiece(anchor)
-    default: throw Error()
+  switch (pieceName) {
+    case 'O': return new OPiece(anchor)
+    case 'I': return new IPiece(anchor)
+    case 'S': return new SPiece(anchor)
+    case 'Z': return new ZPiece(anchor)
+    case 'L': return new LPiece(anchor)
+    case 'J': return new JPiece(anchor)
+    case 'T': return new TPiece(anchor)
   }
 }
+
+function getRandomPieceName(): PieceName {
+  const pieceNames: PieceName[] = ['O', 'I', 'S', 'Z', 'L', 'J', 'T']
+  const randomIndex = Math.floor(Math.random() * pieceNames.length)
+  const randomPiece = pieceNames[randomIndex]
+  return randomPiece
+}
+
 export default class Game {
+  private static nameSequence: PieceName[] | null = null
+
+  private static initSequence(): void {
+    if (Game.nameSequence !== null) throw Error('Sequence already initialized')
+
+    const sequenceSize = 10000
+    const sequence = [getRandomPieceName()]
+
+    for (let i = 0; i < sequenceSize - 1; i++) {
+      const currentPiece = sequence[sequence.length - 1]
+      let nextPiece = getRandomPieceName()
+      if (nextPiece === currentPiece) {
+        nextPiece = getRandomPieceName()
+      }
+      sequence.push(nextPiece)
+    }
+
+    Game.nameSequence = sequence
+  }
+
+  private sequence: Piece[]
+  private position: number
+
   private board: Board
-  // @ts-expect-error
-  private piece: Piece
-  private nextPiece: Piece
   private gameOver: boolean
 
   private lines: number
+
   constructor() {
+    if (Game.nameSequence === null) {
+      Game.initSequence()
+    }
+
+    this.sequence = []
+    for (const pieceName of Game.nameSequence!) {
+      const piece = createPiece(pieceName)
+      this.sequence.push(piece)
+    }
+    this.position = 0
+
     this.board = new Board()
     
     this.gameOver = false
     this.lines = 0
-    this.nextPiece = getRandomPiece()
-    this.updateCurrentPiece()
   }
 
   public isGameOver(): boolean {
@@ -47,44 +82,34 @@ export default class Game {
   }
 
   public updateCurrentPiece(): void {
-    this.piece = this.nextPiece
-    this.setupNextPiece()
+    this.position++
 
     this.checkIfGameOver()
   }
 
   private checkIfGameOver() {
-    if (this.board.createsCollision(this.piece.getPositions())) {
+    if (this.board.createsCollision(this.getPiece().getPositions())) {
       this.gameOver = true
     }
   }
 
-  private setupNextPiece(): void {
-    let nextPiece = getRandomPiece()
-    if (this.piece.equals(nextPiece)) {
-      nextPiece = getRandomPiece()
-    }
-
-    this.nextPiece = nextPiece
-  }
-
   public canDrop(): boolean {
-    return this.board.canDrop(this.piece)
+    return this.board.canDrop(this.getPiece())
   }
 
   public drop(): void {
     if (this.isGameOver()) throw Error()
     if (!this.canDrop()) throw Error()
 
-    this.piece.drop()
-    if (this.piece.getCanPierce()) {
-      if (this.board.createsCollision(this.piece.getPositions())) {
-        if (!this.piece.getPierceStarted()) {
-          this.piece.setPierceStarted()
+    this.getPiece().drop()
+    if (this.getPiece().getCanPierce()) {
+      if (this.board.createsCollision(this.getPiece().getPositions())) {
+        if (!this.getPiece().getPierceStarted()) {
+          this.getPiece().setPierceStarted()
         }
       } else {
-        if (this.piece.getPierceStarted() && !this.piece.getPierceFinished()) {
-          this.piece.setPierceFinished()
+        if (this.getPiece().getPierceStarted() && !this.getPiece().getPierceFinished()) {
+          this.getPiece().setPierceFinished()
         }
       }
     }
@@ -92,9 +117,9 @@ export default class Game {
 
   public merge(): void {
     if (this.isGameOver()) throw Error()
-    if (this.board.canDrop(this.piece)) throw Error()
+    if (this.board.canDrop(this.getPiece())) throw Error()
 
-    this.board.merge(this.piece)
+    this.board.merge(this.getPiece())
   }
 
   public hasLinesToBurn(): boolean {
@@ -135,49 +160,49 @@ export default class Game {
   }
 
   public getPiece(): Piece {
-    return this.piece
+    return this.sequence[this.position]
   }
 
   public getNextPiece(): Piece {
-    return this.nextPiece
+    return this.sequence[this.position + 1]
   }
 
   public pieceCanMoveLeft(): boolean {
-    return this.board.canMoveLeft(this.piece)
+    return this.board.canMoveLeft(this.getPiece())
   }
 
   public pieceCanMoveRight(): boolean {
-    return this.board.canMoveRight(this.piece)
+    return this.board.canMoveRight(this.getPiece())
   }
 
   public getPiecePositions(): PiecePositions {
-    return this.piece.getPositions()
+    return this.getPiece().getPositions()
   }
 
   public getNextPiecePositions(): PiecePositions {
-    return this.nextPiece.getPositions()
+    return this.getNextPiece().getPositions()
   }
 
   public shiftPieceLeft(): void {
-    this.piece.shiftLeft()
+    this.getPiece().shiftLeft()
   }
 
   public shiftPieceRight(): void {
-    this.piece.shiftRight()
+    this.getPiece().shiftRight()
   }
 
   public rotatePieceRight(): void {
-    this.piece.rotateRight()
+    this.getPiece().rotateRight()
   }
 
   public rotatePieceLeft(): void {
-    this.piece.rotateLeft()
+    this.getPiece().rotateLeft()
   }
 
   public getBrainInput(): number[][][] {
     const encoded = this.board.getEncoded()
 
-    const piecePosition = this.piece.getPositions()
+    const piecePosition = this.getPiece().getPositions()
     for (const position of piecePosition) {
       encoded[position.getX()][position.getY()] = [1]
     }
