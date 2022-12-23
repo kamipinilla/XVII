@@ -76,25 +76,6 @@ export default class Brain {
   }
 
   private static createModel(): Sequential {
-    // const model = sequential()
-    // const firstHidden = layers.dense({
-    //   units: 50,
-    //   inputShape: [Brain.inputNodes],
-    //   activation: 'relu'
-    // })
-    // model.add(firstHidden)
-    // const secondHidden = layers.dense({
-    //   units: 10,
-    //   activation: 'relu'
-    // })
-    // model.add(secondHidden)
-    // const output = layers.dense({
-    //   units: Brain.outputNodes,
-    //   activation: 'sigmoid'
-    // })
-    // model.add(output)
-    // return model
-
     const model = sequential();
   
     const IMAGE_WIDTH = 20;
@@ -131,5 +112,24 @@ export default class Brain {
     }));
 
     return model
+    
+    // const model = sequential()
+    // const firstHidden = layers.dense({
+    //   units: 50,
+    //   inputShape: [Brain.inputNodes],
+    //   activation: 'relu'
+    // })
+    // model.add(firstHidden)
+    // const secondHidden = layers.dense({
+    //   units: 10,
+    //   activation: 'relu'
+    // })
+    // model.add(secondHidden)
+    // const output = layers.dense({
+    //   units: Brain.outputNodes,
+    //   activation: 'sigmoid'
+    // })
+    // model.add(output)
+    // return model
   }
 }
